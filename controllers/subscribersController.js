@@ -1,4 +1,3 @@
-// controllers/subscribersController.js
 "use strict";
 
 /**

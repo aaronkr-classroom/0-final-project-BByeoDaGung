@@ -1,11 +1,5 @@
-// controllers/trainsController.js
 "use strict";
 
-/**
- * Listing 18.9 (p. 268-269)
- * Listing 18.11 (p. 271)
- * trainController.js에서 인덱스 액션 생성과 index 액션의 재방문
- */
 const Train = require("../models/Train"); // 사용자 모델 요청
 
 module.exports = {
@@ -29,17 +23,6 @@ module.exports = {
     }); // 분리된 액션으로 뷰 렌더링
   },
 
-  /**
-   * 노트: 구독자 컨트롤러에서 index 액션이 getAllSubscribers를 대체한다. main.js에서 액션 관련
-   * 라우트 index를 가리키도록 수정하고 subscribers.ejs를 index.ejs로 변경된 점을 기억하자. 이
-   * 뷰는 views 폴더 아래 subscribers 폴더에 있어야 한다.
-   */
-
-  /**
-   * Listing 19.2 (p. 278)
-   * trainController.js에 액션 생성 추가
-   */
-  // 폼의 렌더링을 위한 새로운 액션 추가
   new: (req, res) => {
     res.render("trains/new", {
       page: "new-train",
@@ -47,14 +30,13 @@ module.exports = {
     });
   },
 
-  // 사용자를 데이터베이스에 저장하기 위한 create 액션 추가
   create: (req, res, next) => {
     let trainParams = {
-      title: t.title,
-      description: t.description,
-      button: t.button,
-      trainImg: t.trainImg,
-      modalText: t.modalText,
+      title: req.body.title,
+      description: req.body.description,
+      button: req.body.button,
+      trainImg: req.body.trainImg,
+      modalText: req.body.modalText,
     };
     // 폼 파라미터로 사용자 생성
     Train.create(trainParams)
@@ -69,23 +51,12 @@ module.exports = {
       });
   },
 
-  // 분리된 redirectView 액션에서 뷰 렌더링
   redirectView: (req, res, next) => {
     let redirectPath = res.locals.redirect;
     if (redirectPath) res.redirect(redirectPath);
     else next();
   },
 
-  /**
-   * 노트: 구독자 컨트롤러에 new와 create 액션을 추가하는 것은 새로운 CRUD 액션을 맞춰
-   * getAllSubscribers와 saveSubscriber 액션을 삭제할 수 있다는 의미다. 게다가 홈
-   * 컨트롤러에서 할 것은 홈페이지인 index.ejs 제공밖에 없다.
-   */
-
-  /**
-   * Listing 19.7 (p. 285)
-   * trainController.js에서 특정 사용자에 대한 show 액션 추가
-   */
   show: (req, res, next) => {
     let trainId = req.params.id; // request params로부터 사용자 ID 수집
     Train.findById(trainId) // ID로 사용자 찾기
@@ -99,7 +70,6 @@ module.exports = {
       });
   },
 
-  // show 뷰의 렌더링
   showView: (req, res) => {
     res.render("trains/show", {
       page: "train-details",
@@ -107,11 +77,6 @@ module.exports = {
     });
   },
 
-  /**
-   * Listing 20.6 (p. 294)
-   * edit와 update 액션 추가
-   */
-  // edit 액션 추가
   edit: (req, res, next) => {
     let trainId = req.params.id;
     Train.findById(trainId) // ID로 데이터베이스에서 사용자를 찾기 위한 findById 사용
@@ -128,16 +93,15 @@ module.exports = {
       });
   },
 
-  // update 액션 추가
   update: (req, res, next) => {
     let trainId = req.params.id,
       trainParams = {
-        title: t.title,
-        description: t.description,
-        button: t.button,
-        trainImg: t.trainImg,
-        modalText: t.modalText,
-      }; // 요청으로부터 사용자 파라미터 취득
+        title: req.body.title,
+        description: req.body.description,
+        button: req.body.button,
+        trainImg: req.body.trainImg,
+        modalText: req.body.modalText,
+      };
 
     Train.findByIdAndUpdate(trainId, {
       $set: trainParams,
@@ -153,10 +117,6 @@ module.exports = {
       });
   },
 
-  /**
-   * Listing 20.9 (p. 298)
-   * delete 액션의 추가
-   */
   delete: (req, res, next) => {
     let trainId = req.params.id;
     Train.findByIdAndRemove(trainId) // findByIdAndRemove 메소드를 이용한 사용자 삭제

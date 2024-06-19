@@ -1,4 +1,3 @@
-// homeController.js
 "use strict";
 
 /**

@@ -1,4 +1,3 @@
-// controllers/usersController.js
 "use strict";
 
 /**

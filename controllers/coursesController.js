@@ -1,4 +1,3 @@
-// controllers/coursesController.js
 "use strict";
 
 /**
@@ -50,14 +49,10 @@ module.exports = {
   // 사용자를 데이터베이스에 저장하기 위한 create 액션 추가
   create: (req, res, next) => {
     let courseParams = {
-      name: {
-        first: req.body.first,
-        last: req.body.last,
-      },
-      email: req.body.email,
-      coursename: req.body.coursename,
-      password: req.body.password,
-      profileImg: req.body.profileImg,
+      title: req.body.title,
+      description: req.body.description,
+      maxStudents: req.body.maxStudents,
+      cost: req.body.cost,
     };
     // 폼 파라미터로 사용자 생성
     Course.create(courseParams)
@@ -135,14 +130,10 @@ module.exports = {
   update: (req, res, next) => {
     let courseId = req.params.id,
       courseParams = {
-        name: {
-          first: req.body.first,
-          last: req.body.last,
-        },
-        email: req.body.email,
-        coursename: req.body.coursename,
-        password: req.body.password,
-        profileImg: req.body.profileImg,
+        title: req.body.title,
+        description: req.body.description,
+        maxStudents: req.body.maxStudents,
+        cost: req.body.cost,
       }; // 요청으로부터 사용자 파라미터 취득
 
     Course.findByIdAndUpdate(courseId, {

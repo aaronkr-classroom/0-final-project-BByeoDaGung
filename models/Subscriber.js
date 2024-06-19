@@ -1,4 +1,3 @@
-// models/subscriber.js
 "use strict";
 
 /**

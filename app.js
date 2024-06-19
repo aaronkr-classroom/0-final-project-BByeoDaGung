@@ -1,4 +1,3 @@
-// app.js
 "use strict";
 
 /**
@@ -10,6 +9,8 @@
 // modules
 const express = require("express"), // express를 요청
   layouts = require("express-ejs-layouts"), // express-ejs-layout의 요청
+  mongoose = require("mongoose"), // mongoose를 요청
+  methodOverride = require("method-override"), // method-override 요청
   app = express(); // express 애플리케이션의 인스턴스화
 
 // controllers 폴더의 파일을 요청
@@ -21,25 +22,14 @@ const pagesController = require("./controllers/pagesController"),
   trainsController = require("./controllers/trainsController"),
   errorController = require("./controllers/errorController");
 
-/**
- * =====================================================================
- * Define Mongoose and MongoDB connection
- * =====================================================================
- */
-
-// 애플리케이션에 Mongoose 설정
-const mongoose = require("mongoose"), // mongoose를 요청
-  dbName = "ut-nodejs";
-
 // 데이터베이스 연결 설정
-mongoose.connect(`mongodb://127.0.0.1:27017/${dbName}`, {
-  useNewUrlParser: true,
-});
-
-// 연결되면 메시지를 보냄
+mongoose.connect(
+  "mongodb+srv://choys:JapurFJhWUDgdWXZ@bbyeodagung.erqm11u.mongodb.net/?retryWrites=true&w=majority&appName=BByeoDaGung",
+  { useNewUrlParser: true, useUnifiedTopology: true }
+);
 const db = mongoose.connection;
 db.once("open", () => {
-  console.log(`Connected to ${dbName} MongoDB using Mongoose!`);
+  console.log("Connected to MONGODB!!!");
 });
 
 /**
@@ -58,6 +48,16 @@ app.use(express.static("public"));
 // body-parser의 추가
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+/**
+ * Listing 20.3 (p. 292)
+ * 애플리케이션에 method-override 추가
+ */
+app.use(
+  methodOverride("_method", {
+    methods: ["POST", "GET"]
+  })
+);
 
 /**
  * =====================================================================
@@ -155,8 +155,6 @@ router.delete(
 /**
  * Talks
  */
-// router.get("/talks", talksController.index, talksController.indexView); // 모든 토크를 위한 라우트 추가
-// router.get("/talk/:id", talksController.show, talksController.showView); // 특정 토크를 위한 라우트 추가
 router.get("/talks", talksController.index, talksController.indexView); // index 라우트 생성
 router.get("/talks/new", talksController.new); // 생성 폼을 보기 위한 요청 처리
 router.post(

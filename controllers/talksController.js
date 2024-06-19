@@ -1,4 +1,3 @@
-// controllers/talksController.js
 "use strict";
 
 const Talk = require("../models/Talk"); // 사용자 모델 요청
@@ -24,17 +23,6 @@ module.exports = {
     }); // 분리된 액션으로 뷰 렌더링
   },
 
-  /**
-   * 노트: 구독자 컨트롤러에서 index 액션이 getAllSubscribers를 대체한다. main.js에서 액션 관련
-   * 라우트 index를 가리키도록 수정하고 subscribers.ejs를 index.ejs로 변경된 점을 기억하자. 이
-   * 뷰는 views 폴더 아래 subscribers 폴더에 있어야 한다.
-   */
-
-  /**
-   * Listing 19.2 (p. 278)
-   * userController.js에 액션 생성 추가
-   */
-  // 폼의 렌더링을 위한 새로운 액션 추가
   new: (req, res) => {
     res.render("talks/new", {
       page: "new-talk",
@@ -42,17 +30,40 @@ module.exports = {
     });
   },
 
-  // 사용자를 데이터베이스에 저장하기 위한 create 액션 추가
   create: (req, res, next) => {
     let talkParams = {
-      name: {
-        first: req.body.first,
-        last: req.body.last,
+      meta: {
+        title: req.body["meta.title"],
+        subtitle: req.body["meta.subtitle"],
+        abstractOneLine: req.body["meta.abstractOneLine"],
+        abstract: req.body["meta.abstract"],
+        keywords: req.body["meta.keywords"],
       },
-      email: req.body.email,
-      username: req.body.username,
-      password: req.body.password,
-      profileImg: req.body.profileImg,
+      given: {
+        date: req.body["given.date"],
+        location: {
+          name: req.body["given.location.name"],
+          korean: req.body["given.location.korean"],
+          url: req.body["given.location.url"],
+        },
+        organization: {
+          name: req.body["given.organization.name"],
+          korean: req.body["given.organization.korean"],
+          url: req.body["given.organization.url"],
+        },
+        event: {
+          name: req.body["given.event.name"],
+          korean: req.body["given.event.korean"],
+          url: req.body["given.event.url"],
+        },
+      },
+      links: {
+        code: req.body.code,
+        slides: req.body.slides,
+        article: req.body.article,
+      },
+      talkImg: req.body.talkImg,
+      user: req.body.userId,
     };
     // 폼 파라미터로 사용자 생성
     Talk.create(talkParams)
@@ -67,23 +78,12 @@ module.exports = {
       });
   },
 
-  // 분리된 redirectView 액션에서 뷰 렌더링
   redirectView: (req, res, next) => {
     let redirectPath = res.locals.redirect;
     if (redirectPath) res.redirect(redirectPath);
     else next();
   },
 
-  /**
-   * 노트: 구독자 컨트롤러에 new와 create 액션을 추가하는 것은 새로운 CRUD 액션을 맞춰
-   * getAllSubscribers와 saveSubscriber 액션을 삭제할 수 있다는 의미다. 게다가 홈
-   * 컨트롤러에서 할 것은 홈페이지인 index.ejs 제공밖에 없다.
-   */
-
-  /**
-   * Listing 19.7 (p. 285)
-   * userController.js에서 특정 사용자에 대한 show 액션 추가
-   */
   show: (req, res, next) => {
     let talkId = req.params.id; // request params로부터 사용자 ID 수집
     Talk.findById(talkId) // ID로 사용자 찾기
@@ -97,7 +97,6 @@ module.exports = {
       });
   },
 
-  // show 뷰의 렌더링
   showView: (req, res) => {
     res.render("talks/show", {
       page: "talk-details",
@@ -105,11 +104,6 @@ module.exports = {
     });
   },
 
-  /**
-   * Listing 20.6 (p. 294)
-   * edit와 update 액션 추가
-   */
-  // edit 액션 추가
   edit: (req, res, next) => {
     let talkId = req.params.id;
     Talk.findById(talkId) // ID로 데이터베이스에서 사용자를 찾기 위한 findById 사용
@@ -124,19 +118,42 @@ module.exports = {
       });
   },
 
-  // update 액션 추가
   update: (req, res, next) => {
     let talkId = req.params.id,
       talkParams = {
-        name: {
-          first: req.body.first,
-          last: req.body.last,
+        meta: {
+          title: req.body["meta.title"],
+          subtitle: req.body["meta.subtitle"],
+          abstractOneLine: req.body["meta.abstractOneLine"],
+          abstract: req.body["meta.abstract"],
+          keywords: req.body["meta.keywords"],
         },
-        email: req.body.email,
-        username: req.body.username,
-        password: req.body.password,
-        profileImg: req.body.profileImg,
-      }; // 요청으로부터 사용자 파라미터 취득
+        given: {
+          date: req.body["given.date"],
+          location: {
+            name: req.body["given.location.name"],
+            korean: req.body["given.location.korean"],
+            url: req.body["given.location.url"],
+          },
+          organization: {
+            name: req.body["given.organization.name"],
+            korean: req.body["given.organization.korean"],
+            url: req.body["given.organization.url"],
+          },
+          event: {
+            name: req.body["given.event.name"],
+            korean: req.body["given.event.korean"],
+            url: req.body["given.event.url"],
+          },
+        },
+        links: {
+          code: req.body.code,
+          slides: req.body.slides,
+          article: req.body.article,
+        },
+        talkImg: req.body.talkImg,
+        user: req.body.userId,
+      };
 
     Talk.findByIdAndUpdate(talkId, {
       $set: talkParams,
@@ -152,10 +169,6 @@ module.exports = {
       });
   },
 
-  /**
-   * Listing 20.9 (p. 298)
-   * delete 액션의 추가
-   */
   delete: (req, res, next) => {
     let talkId = req.params.id;
     Talk.findByIdAndRemove(talkId) // findByIdAndRemove 메소드를 이용한 사용자 삭제

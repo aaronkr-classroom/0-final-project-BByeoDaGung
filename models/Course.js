@@ -1,4 +1,3 @@
-// models/Course.js
 "use strict";
 
 /**
